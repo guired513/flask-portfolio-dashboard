@@ -81,5 +81,52 @@ def logout():
     logout_user()
     return redirect(url_for("home"))
 
+
+# Admin: List all projects
+@app.route("/projects")
+@login_required
+def list_projects():
+    projects = Project.query.all()
+    return render_template("projects/list_projects.html", projects=projects)
+
+# Admin: Create new project
+@app.route("/projects/create", methods=["GET", "POST"])
+@login_required
+def create_project():
+    if request.method == "POST":
+        title = request.form.get("title")
+        description = request.form.get("description")
+        link = request.form.get("link")
+        image_url = request.form.get("image_url")
+        new_project = Project(title=title, description=description, link=link, image_url=image_url)
+        db.session.add(new_project)
+        db.session.commit()
+        return redirect(url_for("list_projects"))
+    return render_template("projects/create_project.html")
+
+# Admin: Edit a project
+@app.route("/projects/edit/<int:project_id>", methods=["GET", "POST"])
+@login_required
+def edit_project(project_id):
+    project = Project.query.get_or_404(project_id)
+    if request.method == "POST":
+        project.title = request.form.get("title")
+        project.description = request.form.get("description")
+        project.link = request.form.get("link")
+        project.image_url = request.form.get("image_url")
+        db.session.commit()
+        return redirect(url_for("list_projects"))
+    return render_template("projects/edit_project.html", project=project)
+
+# Admin: Delete a project
+@app.route("/projects/delete/<int:project_id>")
+@login_required
+def delete_project(project_id):
+    project = Project.query.get_or_404(project_id)
+    db.session.delete(project)
+    db.session.commit()
+    return redirect(url_for("list_projects"))
+
+
 if __name__ == "__main__":
     app.run(debug=True)
