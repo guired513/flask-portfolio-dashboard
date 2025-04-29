@@ -40,6 +40,8 @@ class User(UserMixin, db.Model):
     projects = db.relationship('Project', backref='user', lazy=True)
     skills = db.relationship('Skill', backref='user', lazy=True)
 
+    display_name = db.Column(db.String(100), default="")
+
 # Create the database model for Project
 class Project(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -131,6 +133,7 @@ def dashboard():
 @login_required
 def edit_profile():
     if request.method == "POST":
+        current_user.display_name = request.form.get("display_name")
         current_user.bio = request.form.get("bio")
         current_user.avatar_url = request.form.get("avatar_url")
         current_user.website_url = request.form.get("website_url")

@@ -5,6 +5,10 @@
 <h2>🧑‍💼 Edit Profile</h2>
 <form method="POST">
     <div class="mb-3">
+        <label>Display Name</label>
+        <input class="form-control" name="display_name" value="{{ current_user.display_name }}">
+    </div>
+    <div class="mb-3">
         <label>Bio</label>
         <textarea class="form-control" name="bio">{{ current_user.bio }}</textarea>
     </div>
