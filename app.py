@@ -13,17 +13,30 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 
 db = SQLAlchemy(app)
+
+# Models
+#--------------------------------------------------------------------------
+
+from werkzeug.security import generate_password_hash, check_password_hash
+
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
 
-    # New fields:
+    # Add these methods:
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password, method='pbkdf2:sha256')
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+    # Make sure you still have these new profile fields:
     bio = db.Column(db.Text, default="")
     avatar_url = db.Column(db.String(300), default="")
     website_url = db.Column(db.String(300), default="")
 
-    # Relationships
+    # And relationships if added:
     projects = db.relationship('Project', backref='user', lazy=True)
     skills = db.relationship('Skill', backref='user', lazy=True)
 
