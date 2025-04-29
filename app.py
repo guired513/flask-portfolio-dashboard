@@ -10,7 +10,19 @@ app.secret_key = 'your_super_secret_key_here'  # Replace this in production!
 # After setting up app and login manager
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///portfolio.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+
 db = SQLAlchemy(app)
+class User(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    password_hash = db.Column(db.String(128), nullable=False)
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password, method='pbkdf2:sha256')
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
 
 # Create the database model for Project
 class Project(db.Model):
@@ -33,33 +45,22 @@ with app.app_context():
 
 
 
-
 # Setup Flask-Login
 login_manager = LoginManager()
 login_manager.login_view = "login"
 login_manager.init_app(app)
 
 # Mock User Database (Only you)
-class User(UserMixin):
-    def __init__(self, id, username, password):
-        self.id = id
-        self.username = username
-        self.password_hash = generate_password_hash(password, method='pbkdf2:sha256')
 
-    def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
 
 # Fake User (Admin only)
-users = {
+"""users = {
     "admin": User(id=1, username="admin", password="adminpass")  # You can change the password later
-}
+}"""
 
 @login_manager.user_loader
 def load_user(user_id):
-    for user in users.values():
-        if user.id == int(user_id):
-            return user
-    return None
+    return User.query.get(int(user_id))
 
 
 
@@ -75,12 +76,12 @@ def login():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
-        user = users.get(username)
+        user = User.query.filter_by(username=username).first()
         if user and user.check_password(password):
             login_user(user)
-            return redirect(url_for("dashboard"))
+            return redirect(url_for("stream_view"))
         else:
-            flash("Invalid credentials. Please try again.")
+            flash("Invalid credentials.")
             return redirect(url_for("login"))
     return render_template("login.html")
 
@@ -89,12 +90,34 @@ def login():
 def dashboard():
     return render_template("dashboard.html", username=current_user.username)
 
+
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        if User.query.filter_by(username=username).first():
+            flash("Username already taken.")
+            return redirect(url_for("register"))
+        user = User(username=username)
+        user.set_password(password)
+        db.session.add(user)
+        db.session.commit()
+        flash("Registration successful! Please login.")
+        return redirect(url_for("login"))
+    return render_template("register.html")
+
+@app.route("/stream")
+@login_required
+def stream_view():
+    return f"<h1>Welcome {current_user.username}!</h1><p>This will be the global stream.</p><a href='/logout'>Logout</a>"
+
 @app.route("/logout")
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for("home"))
-
+    return redirect(url_for("login"))
 
 # Admin: List all projects
 @app.route("/projects")
