@@ -159,6 +159,20 @@ def register():
         return redirect(url_for("login"))
     return render_template("register.html")
 
+
+@app.route("/admin")
+@login_required
+def admin_dashboard():
+    if not current_user.is_admin:
+        flash("Access denied. Admins only.")
+        return redirect(url_for('stream_view'))
+
+    users = User.query.all()
+    projects = Project.query.all()
+    comments = Comment.query.all()
+    return render_template("admin_dashboard.html", users=users, projects=projects, comments=comments)
+
+
 @app.route("/stream")
 @login_required
 def stream_view():

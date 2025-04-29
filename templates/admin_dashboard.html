@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<h2>🛠 Admin Dashboard</h2>
+
+<h4>All Users</h4>
+<table class="table table-bordered">
+    <thead>
+        <tr><th>Username</th><th>Display Name</th><th>Admin?</th></tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.username }}</td>
+            <td>{{ user.display_name or "N/A" }}</td>
+            <td>{{ "✅" if user.is_admin else "❌" }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h4 class="mt-5">All Projects</h4>
+<table class="table table-bordered">
+    <thead>
+        <tr><th>Title</th><th>Owner</th></tr>
+    </thead>
+    <tbody>
+        {% for project in projects %}
+        <tr>
+            <td>{{ project.title }}</td>
+            <td>{{ project.user.display_name or project.user.username }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h4 class="mt-5">All Comments</h4>
+<table class="table table-bordered">
+    <thead>
+        <tr><th>Content</th><th>User</th><th>Project</th></tr>
+    </thead>
+    <tbody>
+        {% for comment in comments %}
+        <tr>
+            <td>{{ comment.content }}</td>
+            <td>{{ comment.user.display_name or comment.user.username }}</td>
+            <td>{{ comment.project.title }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
