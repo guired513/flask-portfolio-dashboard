@@ -1,10 +1,66 @@
-from flask import Flask
+from flask import Flask, render_template, redirect, url_for, request, flash
+from flask_login import LoginManager, login_user, logout_user, login_required, UserMixin, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
+app.secret_key = 'your_super_secret_key_here'  # Replace this in production!
 
+# Setup Flask-Login
+login_manager = LoginManager()
+login_manager.login_view = "login"
+login_manager.init_app(app)
+
+# Mock User Database (Only you)
+class User(UserMixin):
+    def __init__(self, id, username, password):
+        self.id = id
+        self.username = username
+        self.password_hash = generate_password_hash(password, method='pbkdf2:sha256')
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+# Fake User (Admin only)
+users = {
+    "admin": User(id=1, username="admin", password="adminpass")  # You can change the password later
+}
+
+@login_manager.user_loader
+def load_user(user_id):
+    for user in users.values():
+        if user.id == int(user_id):
+            return user
+    return None
+
+# Routes
 @app.route("/")
 def home():
-    return "Welcome to My Portfolio Dashboard!"
+    return "Welcome to My Portfolio Dashboard! <a href='/login'>Login</a>"
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        user = users.get(username)
+        if user and user.check_password(password):
+            login_user(user)
+            return redirect(url_for("dashboard"))
+        else:
+            flash("Invalid credentials. Please try again.")
+            return redirect(url_for("login"))
+    return render_template("login.html")
+
+@app.route("/dashboard")
+@login_required
+def dashboard():
+    return render_template("dashboard.html", username=current_user.username)
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for("home"))
 
 if __name__ == "__main__":
     app.run(debug=True)
