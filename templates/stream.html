@@ -19,6 +19,28 @@
                 {% if project.user.avatar_url %}
                     <img src="{{ project.user.avatar_url }}" width="30" class="rounded-circle ms-2">
                 {% endif %}
+                {% if project.user_id != current_user.id %}
+                <form action="{{ url_for('like_project', project_id=project.id) }}" method="POST" style="display:inline;">
+                    <button type="submit" class="btn btn-outline-danger btn-sm">
+                        ❤️ {{ project.likes | length }}
+                    </button>
+                </form>
+                {% else %}
+                <small class="text-muted">❤️ You posted this</small>
+                {% endif %}
+                <h6 class="mt-3">Comments ({{ project.comments|length }})</h6>
+                    <ul class="list-unstyled">
+                        {% for comment in project.comments %}
+                            <li><strong>{{ comment.user.username }}</strong>: {{ comment.content }}</li>
+                        {% endfor %}
+                    </ul>
+
+                    <form action="{{ url_for('comment_project', project_id=project.id) }}" method="POST" class="mt-2">
+                        <div class="input-group">
+                            <input type="text" name="content" class="form-control" placeholder="Leave a comment..." required>
+                            <button class="btn btn-primary">Post</button>
+                        </div>
+                    </form>
             </div>
         </div>
     </div>
@@ -33,9 +55,10 @@
             <div class="card-body">
                 <h5>{{ skill.name }}</h5>
                 <p>{{ skill.level }}</p>
-                {% if project.user.avatar_url %}
-                    <img src="{{ project.user.avatar_url }}" width="30" class="rounded-circle ms-2">
+                {% if skill.user.avatar_url %}
+                    <img src="{{ skill.user.avatar_url }}" width="30" class="rounded-circle ms-2">
                 {% endif %}
+                <small class="text-muted">By {{ skill.user.username }}</small>
             </div>
         </div>
     </div>

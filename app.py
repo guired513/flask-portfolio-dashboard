@@ -48,6 +48,8 @@ class Project(db.Model):
     link = db.Column(db.String(200), nullable=True)
     image_url = db.Column(db.String(200), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    likes = db.relationship('Like', backref='project', lazy=True)
+    comments = db.relationship('Comment', backref='project', lazy=True)
 
 # Create the database model for Skill
 class Skill(db.Model):
@@ -55,6 +57,18 @@ class Skill(db.Model):
     name = db.Column(db.String(100), nullable=False)
     level = db.Column(db.String(100), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+class Like(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    project_id = db.Column(db.Integer, db.ForeignKey('project.id'), nullable=False)
+
+class Comment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.Text, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    project_id = db.Column(db.Integer, db.ForeignKey('project.id'), nullable=False)
+    user = db.relationship('User', backref='comments', lazy=True)
 
 
 # Create the database file and tables
@@ -264,6 +278,35 @@ def delete_skill(skill_id):
     db.session.commit()
     return redirect(url_for("list_skills"))
 
+#like/unlike route
+@app.route("/project/<int:project_id>/like", methods=["POST"])
+@login_required
+def like_project(project_id):
+    project = Project.query.get_or_404(project_id)
+
+    if project.user_id == current_user.id:
+        flash("You can't like your own project.")
+        return redirect(url_for('stream_view'))
+
+    like = Like.query.filter_by(user_id=current_user.id, project_id=project_id).first()
+    if like:
+        db.session.delete(like)
+    else:
+        db.session.add(Like(user_id=current_user.id, project_id=project_id))
+    db.session.commit()
+    return redirect(url_for('stream_view'))
+
+
+#comment route
+@app.route("/project/<int:project_id>/comment", methods=["POST"])
+@login_required
+def comment_project(project_id):
+    content = request.form.get("content")
+    if content:
+        new_comment = Comment(content=content, user_id=current_user.id, project_id=project_id)
+        db.session.add(new_comment)
+        db.session.commit()
+    return redirect(url_for('stream_view'))
 
 if __name__ == "__main__":
     app.run(debug=True)
