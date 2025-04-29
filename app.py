@@ -113,13 +113,22 @@ def register():
 @app.route("/stream")
 @login_required
 def stream_view():
-    return f"<h1>Welcome {current_user.username}!</h1><p>This will be the global stream.</p><a href='/logout'>Logout</a>"
+    projects = Project.query.all()
+    skills = Skill.query.all()
+    return render_template("stream.html", projects=projects, skills=skills)
 
 @app.route("/logout")
 @login_required
 def logout():
     logout_user()
     return redirect(url_for("login"))
+
+@app.route("/my-portfolio")
+@login_required
+def my_portfolio():
+    projects = Project.query.filter_by(user_id=current_user.id).all()
+    skills = Skill.query.filter_by(user_id=current_user.id).all()
+    return render_template("my_portfolio.html", projects=projects, skills=skills)
 
 # Admin: List all projects
 @app.route("/projects")
