@@ -20,9 +20,17 @@ class Project(db.Model):
     link = db.Column(db.String(200), nullable=True)
     image_url = db.Column(db.String(200), nullable=True)
 
+# Create the database model for Skill
+class Skill(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    level = db.Column(db.String(100), nullable=False)
+
+
 # Create the database file and tables
 with app.app_context():
     db.create_all()
+
 
 
 
@@ -52,6 +60,8 @@ def load_user(user_id):
         if user.id == int(user_id):
             return user
     return None
+
+
 
 # Routes
 @app.route("/")
