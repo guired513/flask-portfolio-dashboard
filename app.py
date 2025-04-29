@@ -4,6 +4,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from flask_sqlalchemy import SQLAlchemy
 
+app = Flask(__name__)
+app.secret_key = 'your_super_secret_key_here'  # Replace this in production!
+
 # After setting up app and login manager
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///portfolio.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -21,8 +24,7 @@ class Project(db.Model):
 with app.app_context():
     db.create_all()
 
-app = Flask(__name__)
-app.secret_key = 'your_super_secret_key_here'  # Replace this in production!
+
 
 # Setup Flask-Login
 login_manager = LoginManager()
