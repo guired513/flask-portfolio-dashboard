@@ -67,7 +67,8 @@ def load_user(user_id):
 @app.route("/")
 def home():
     projects = Project.query.all()
-    return render_template("public_portfolio.html", projects=projects)
+    skills = Skill.query.all()
+    return render_template("public_portfolio.html", projects=projects, skills=skills)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
