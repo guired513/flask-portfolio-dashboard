@@ -2,6 +2,25 @@ from flask import Flask, render_template, redirect, url_for, request, flash
 from flask_login import LoginManager, login_user, logout_user, login_required, UserMixin, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
+from flask_sqlalchemy import SQLAlchemy
+
+# After setting up app and login manager
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///portfolio.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+
+# Create the database model for Project
+class Project(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    link = db.Column(db.String(200), nullable=True)
+    image_url = db.Column(db.String(200), nullable=True)
+
+# Create the database file and tables
+with app.app_context():
+    db.create_all()
+
 app = Flask(__name__)
 app.secret_key = 'your_super_secret_key_here'  # Replace this in production!
 
