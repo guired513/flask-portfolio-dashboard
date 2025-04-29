@@ -31,7 +31,7 @@
                 <h6 class="mt-3">Comments ({{ project.comments|length }})</h6>
                     <ul class="list-unstyled">
                         {% for comment in project.comments %}
-                            <li><strong>{{ comment.user.displayname or comment.username}}</strong>: {{ comment.content }}</li>
+                            <li><strong>{{ comment.user.display_name or comment.username}}</strong>: {{ comment.content }}</li>
                         {% endfor %}
                     </ul>
 
