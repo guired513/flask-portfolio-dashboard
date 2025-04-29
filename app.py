@@ -56,7 +56,8 @@ def load_user(user_id):
 # Routes
 @app.route("/")
 def home():
-    return "Welcome to My Portfolio Dashboard! <a href='/login'>Login</a>"
+    projects = Project.query.all()
+    return render_template("public_portfolio.html", projects=projects)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
