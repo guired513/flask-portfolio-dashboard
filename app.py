@@ -41,6 +41,7 @@ class User(UserMixin, db.Model):
     skills = db.relationship('Skill', backref='user', lazy=True)
 
     display_name = db.Column(db.String(100), default="")
+    is_admin = db.Column(db.Boolean, default=False)
 
 # Create the database model for Project
 class Project(db.Model):
