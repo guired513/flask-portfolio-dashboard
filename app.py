@@ -145,6 +145,47 @@ def public_portfolio():
     projects = Project.query.all()
     return render_template("public_portfolio.html", projects=projects)
 
+# Admin: List all skills
+@app.route("/skills")
+@login_required
+def list_skills():
+    skills = Skill.query.all()
+    return render_template("skills/list_skills.html", skills=skills)
+
+# Admin: Create new skill
+@app.route("/skills/create", methods=["GET", "POST"])
+@login_required
+def create_skill():
+    if request.method == "POST":
+        name = request.form.get("name")
+        level = request.form.get("level")
+        new_skill = Skill(name=name, level=level)
+        db.session.add(new_skill)
+        db.session.commit()
+        return redirect(url_for("list_skills"))
+    return render_template("skills/create_skill.html")
+
+# Admin: Edit a skill
+@app.route("/skills/edit/<int:skill_id>", methods=["GET", "POST"])
+@login_required
+def edit_skill(skill_id):
+    skill = Skill.query.get_or_404(skill_id)
+    if request.method == "POST":
+        skill.name = request.form.get("name")
+        skill.level = request.form.get("level")
+        db.session.commit()
+        return redirect(url_for("list_skills"))
+    return render_template("skills/edit_skill.html", skill=skill)
+
+# Admin: Delete a skill
+@app.route("/skills/delete/<int:skill_id>")
+@login_required
+def delete_skill(skill_id):
+    skill = Skill.query.get_or_404(skill_id)
+    db.session.delete(skill)
+    db.session.commit()
+    return redirect(url_for("list_skills"))
+
 
 if __name__ == "__main__":
     app.run(debug=True)
