@@ -129,6 +129,11 @@ def delete_project(project_id):
     db.session.commit()
     return redirect(url_for("list_projects"))
 
+@app.route("/portfolio")
+def public_portfolio():
+    projects = Project.query.all()
+    return render_template("public_portfolio.html", projects=projects)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
