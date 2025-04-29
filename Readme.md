@@ -35,7 +35,7 @@ An Admin Dashboard provides full site-wide management capabilities.
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-username/your-repo-name.git
+   git clone https://github.com/guired513/your-repo-name.git
    cd your-repo-name
 
 Set up virtual environment
