@@ -2,6 +2,20 @@
 {% block title %}My Portfolio{% endblock %}
 
 {% block content %}
+{% block content %}
+<div class="d-flex align-items-center mb-4">
+    {% if current_user.avatar_url %}
+    <img src="{{ current_user.avatar_url }}" alt="Avatar" width="80" class="rounded-circle me-3">
+    {% endif %}
+    <div>
+        <h3>{{ current_user.username }}</h3>
+        <p>{{ current_user.bio }}</p>
+        {% if current_user.website_url %}
+        <a href="{{ current_user.website_url }}" target="_blank">{{ current_user.website_url }}</a>
+        {% endif %}
+    </div>
+</div>
+
 <h2 class="text-center">👤 My Portfolio</h2>
 
 <h4 class="mt-4">My Projects</h4>

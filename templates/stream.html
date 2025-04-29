@@ -16,6 +16,9 @@
                 <h5>{{ project.title }}</h5>
                 <p>{{ project.description }}</p>
                 <small class="text-muted">By {{ project.user.username }}</small>
+                {% if project.user.avatar_url %}
+                    <img src="{{ project.user.avatar_url }}" width="30" class="rounded-circle ms-2">
+                {% endif %}
             </div>
         </div>
     </div>
@@ -30,7 +33,9 @@
             <div class="card-body">
                 <h5>{{ skill.name }}</h5>
                 <p>{{ skill.level }}</p>
-                <small class="text-muted">By {{ skill.user.username }}</small>
+                {% if project.user.avatar_url %}
+                    <img src="{{ project.user.avatar_url }}" width="30" class="rounded-circle ms-2">
+                {% endif %}
             </div>
         </div>
     </div>

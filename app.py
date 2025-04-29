@@ -17,10 +17,13 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
-    def set_password(self, password):
-        self.password_hash = generate_password_hash(password, method='pbkdf2:sha256')
-    def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
+
+    # New fields:
+    bio = db.Column(db.Text, default="")
+    avatar_url = db.Column(db.String(300), default="")
+    website_url = db.Column(db.String(300), default="")
+
+    # Relationships
     projects = db.relationship('Project', backref='user', lazy=True)
     skills = db.relationship('Skill', backref='user', lazy=True)
 
@@ -67,7 +70,7 @@ def load_user(user_id):
 
 
 # Routes
-
+#---------------------------------------------------------------------
 @app.route("/")
 def home():
     return redirect(url_for("stream_view"))
@@ -97,7 +100,17 @@ def login():
 def dashboard():
     return render_template("dashboard.html", username=current_user.username)
 
-
+@app.route("/profile/edit", methods=["GET", "POST"])
+@login_required
+def edit_profile():
+    if request.method == "POST":
+        current_user.bio = request.form.get("bio")
+        current_user.avatar_url = request.form.get("avatar_url")
+        current_user.website_url = request.form.get("website_url")
+        db.session.commit()
+        flash("Profile updated!")
+        return redirect(url_for("my_portfolio"))
+    return render_template("edit_profile.html")
 
 @app.route("/register", methods=["GET", "POST"])
 def register():

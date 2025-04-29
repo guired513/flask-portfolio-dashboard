@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Edit Profile{% endblock %}
+
+{% block content %}
+<h2>🧑‍💼 Edit Profile</h2>
+<form method="POST">
+    <div class="mb-3">
+        <label>Bio</label>
+        <textarea class="form-control" name="bio">{{ current_user.bio }}</textarea>
+    </div>
+    <div class="mb-3">
+        <label>Avatar Image URL</label>
+        <input class="form-control" name="avatar_url" value="{{ current_user.avatar_url }}">
+    </div>
+    <div class="mb-3">
+        <label>Website URL</label>
+        <input class="form-control" name="website_url" value="{{ current_user.website_url }}">
+    </div>
+    <button class="btn btn-primary">Update Profile</button>
+</form>
+{% endblock %}
