@@ -17,12 +17,12 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
-
     def set_password(self, password):
         self.password_hash = generate_password_hash(password, method='pbkdf2:sha256')
-
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+    projects = db.relationship('Project', backref='user', lazy=True)
+    skills = db.relationship('Skill', backref='user', lazy=True)
 
 # Create the database model for Project
 class Project(db.Model):
@@ -31,12 +31,14 @@ class Project(db.Model):
     description = db.Column(db.Text, nullable=False)
     link = db.Column(db.String(200), nullable=True)
     image_url = db.Column(db.String(200), nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
 # Create the database model for Skill
 class Skill(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     level = db.Column(db.String(100), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
 
 # Create the database file and tables
@@ -123,7 +125,7 @@ def logout():
 @app.route("/projects")
 @login_required
 def list_projects():
-    projects = Project.query.all()
+    projects = Project.query.filter_by(user_id=current_user.id).all()
     return render_template("projects/list_projects.html", projects=projects)
 
 # Admin: Create new project
@@ -135,7 +137,7 @@ def create_project():
         description = request.form.get("description")
         link = request.form.get("link")
         image_url = request.form.get("image_url")
-        new_project = Project(title=title, description=description, link=link, image_url=image_url)
+        new_project = Project(title=title, description=description, link=link, image_url=image_url, user_id=current_user.id)
         db.session.add(new_project)
         db.session.commit()
         return redirect(url_for("list_projects"))
@@ -146,6 +148,9 @@ def create_project():
 @login_required
 def edit_project(project_id):
     project = Project.query.get_or_404(project_id)
+    if project.user_id != current_user.id:
+        flash("Unauthorized access.")
+        return redirect(url_for("list_projects"))
     if request.method == "POST":
         project.title = request.form.get("title")
         project.description = request.form.get("description")
@@ -160,6 +165,9 @@ def edit_project(project_id):
 @login_required
 def delete_project(project_id):
     project = Project.query.get_or_404(project_id)
+    if project.user_id != current_user.id:
+        flash("Unauthorized access.")
+        return redirect(url_for("list_projects"))
     db.session.delete(project)
     db.session.commit()
     return redirect(url_for("list_projects"))
@@ -173,7 +181,7 @@ def public_portfolio():
 @app.route("/skills")
 @login_required
 def list_skills():
-    skills = Skill.query.all()
+    skills = Skill.query.filter_by(user_id=current_user.id).all()
     return render_template("skills/list_skills.html", skills=skills)
 
 # Admin: Create new skill
@@ -183,7 +191,7 @@ def create_skill():
     if request.method == "POST":
         name = request.form.get("name")
         level = request.form.get("level")
-        new_skill = Skill(name=name, level=level)
+        new_skill = Skill(name=name, level=level, user_id=current_user.id)
         db.session.add(new_skill)
         db.session.commit()
         return redirect(url_for("list_skills"))
@@ -194,6 +202,9 @@ def create_skill():
 @login_required
 def edit_skill(skill_id):
     skill = Skill.query.get_or_404(skill_id)
+    if project.user_id != skill_user.id:
+        flash("Unauthorized access.")
+        return redirect(url_for("list_projects"))
     if request.method == "POST":
         skill.name = request.form.get("name")
         skill.level = request.form.get("level")
@@ -206,6 +217,9 @@ def edit_skill(skill_id):
 @login_required
 def delete_skill(skill_id):
     skill = Skill.query.get_or_404(skill_id)
+    if project.user_id != skill_user.id:
+        flash("Unauthorized access.")
+        return redirect(url_for("list_projects"))
     db.session.delete(skill)
     db.session.commit()
     return redirect(url_for("list_skills"))
