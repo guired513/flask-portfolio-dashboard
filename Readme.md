@@ -38,26 +38,28 @@ An Admin Dashboard provides full site-wide management capabilities.
    git clone https://github.com/guired513/your-repo-name.git
    cd your-repo-name
 
-Set up virtual environment
-python -m venv venv
-source venv/bin/activate   # macOS/Linux
-.\venv\Scripts\activate     # Windows
-Install dependencies
-pip install -r requirements.txt
-Run the application
-python app.py
-Visit in your browser
-http://127.0.0.1:5000/
+**Set up virtual environment
+    ```bash
+    python -m venv venv
+    source venv/bin/activate   # macOS/Linux
+    .\venv\Scripts\activate     # Windows
+    Install dependencies
+    pip install -r requirements.txt
+    Run the application
+    python app.py
+    Visit in your browser
+    http://127.0.0.1:5000/
 
 ## 🧪 Important Notes
 
-On first run, a portfolio.db file is created automatically.
-Register a user and manually promote it to Admin via Flask shell:
-flask shell
-from app import db, User
-user = User.query.filter_by(username='your-admin-username').first()
-user.is_admin = True
-db.session.commit()
+- On first run, a portfolio.db file is created automatically.
+- Register a user and manually promote it to Admin via Flask shell:
+    ```bash
+    flask shell
+    from app import db, User
+    user = User.query.filter_by(username='your-admin-username').first()
+    user.is_admin = True
+    db.session.commit()
 
 ## 📸 Screenshots
 To be updated later (Landing Page, Dashboard, Admin View, Portfolio Stream)
@@ -77,8 +79,8 @@ This project is licensed under the MIT License.
 
 ## 💬 Acknowledgments
 
-Flask Documentation
-Bootstrap 5 Framework
-Jinja2 Template Engine
-StackOverflow Community
+- Flask Documentation
+- Bootstrap 5 Framework
+- Jinja2 Template Engine
+- StackOverflow Community
 
