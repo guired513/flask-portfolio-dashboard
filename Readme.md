@@ -40,7 +40,7 @@ An Admin Dashboard provides full site-wide management capabilities.
 
 **Set up virtual environment**
     
-    ```bash
+    
     # Set up virtual environment
     python -m venv venv
 
