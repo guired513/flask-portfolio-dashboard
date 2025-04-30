@@ -15,7 +15,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 # Models
-#--------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------------
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -79,7 +79,6 @@ with app.app_context():
     db.create_all()
 
 
-
 # Setup Flask-Login
 login_manager = LoginManager()
 login_manager.login_view = "login"
@@ -100,7 +99,7 @@ def load_user(user_id):
 
 
 # Routes
-#---------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------------------------
 @app.route("/")
 def home():
     return redirect(url_for("stream_view"))
