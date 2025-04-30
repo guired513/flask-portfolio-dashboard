@@ -326,5 +326,49 @@ def comment_project(project_id):
         db.session.commit()
     return redirect(url_for('stream_view'))
 
+@app.route("/admin/delete_user/<int:user_id>")
+@login_required
+def delete_user(user_id):
+    if not current_user.is_admin:
+        flash("Admins only.")
+        return redirect(url_for("stream_view"))
+
+    user = User.query.get_or_404(user_id)
+    if user.id == current_user.id:
+        flash("You cannot delete yourself.")
+        return redirect(url_for("admin_dashboard"))
+
+    db.session.delete(user)
+    db.session.commit()
+    flash(f"User '{user.username}' deleted.")
+    return redirect(url_for("admin_dashboard"))
+
+@app.route("/admin/delete_project/<int:project_id>")
+@login_required
+def delete_project_admin(project_id):
+    if not current_user.is_admin:
+        flash("Admins only.")
+        return redirect(url_for("stream_view"))
+
+    project = Project.query.get_or_404(project_id)
+    db.session.delete(project)
+    db.session.commit()
+    flash(f"Project '{project.title}' deleted.")
+    return redirect(url_for("admin_dashboard"))
+
+@app.route("/admin/delete_comment/<int:comment_id>")
+@login_required
+def delete_comment_admin(comment_id):
+    if not current_user.is_admin:
+        flash("Admins only.")
+        return redirect(url_for("stream_view"))
+
+    comment = Comment.query.get_or_404(comment_id)
+    db.session.delete(comment)
+    db.session.commit()
+    flash("Comment deleted.")
+    return redirect(url_for("admin_dashboard"))
+
+
 if __name__ == "__main__":
     app.run(debug=True)
