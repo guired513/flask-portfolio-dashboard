@@ -38,7 +38,7 @@ An Admin Dashboard provides full site-wide management capabilities.
    git clone https://github.com/guired513/your-repo-name.git
    cd your-repo-name
 
-**Set up virtual environment
+**Set up virtual environment**
     ```bash
     python -m venv venv
     source venv/bin/activate   # macOS/Linux
