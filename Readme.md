@@ -73,7 +73,8 @@ https://flask-portfolio-dashboard.onrender.com/
 🔥 Image upload (instead of URL for avatars)
 🔥 Admin content moderation tools
 🔥 Full site deployment (PostgreSQL + Gunicorn)
-📄 License
+
+##📄 License
 
 This project is licensed under the MIT License.
 
