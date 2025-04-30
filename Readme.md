@@ -47,8 +47,9 @@ An Admin Dashboard provides full site-wide management capabilities.
     pip install -r requirements.txt
     Run the application
     python app.py
-    Visit in your browser
-    http://127.0.0.1:5000/
+
+  Visit in your browser
+  http://127.0.0.1:5000/
 
 ## 🧪 Important Notes
 
