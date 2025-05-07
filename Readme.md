@@ -35,8 +35,8 @@ An Admin Dashboard provides full site-wide management capabilities.
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/guired513/your-repo-name.git
-   cd your-repo-name
+   git clone https://github.com/guired513/flask-portfolio-dashboard.git
+   cd flask-portfolio-dashboard
 
 **Set up virtual environment**
     
@@ -92,4 +92,19 @@ This project is licensed under the MIT License.
 - Bootstrap 5 Framework
 - Jinja2 Template Engine
 - StackOverflow Community
+
+---
+
+## 🙌 Author
+
+**Guillermo V. Red, Jr., DIT**  
+Assistant Professor IV – Bicol University Polangui  
+📫 [GitHub](https://github.com/guired513)  
+📧 gjvred@bicol-u.edu.ph
+
+---
+
+## 📜 License
+
+This project is licensed under the [MIT License](LICENSE).
 
